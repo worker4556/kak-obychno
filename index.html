@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f9f7ef">
+  <meta name="description" content="Концепт быстрого повторного заказа для «Вкусно — и точка».">
+  <title>Как обычно? — быстрый заказ</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="pin" viewBox="0 0 24 24"><path d="M19 10c0 5-7 10-7 10S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.2"/></symbol>
+    <symbol id="chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
+    <symbol id="bag" viewBox="0 0 24 24"><path d="M6 7h12l2 13H4L6 7Zm3 2V6a3 3 0 0 1 6 0v3"/></symbol>
+    <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 4 4 10-9"/></symbol>
+    <symbol id="close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="swap" viewBox="0 0 24 24"><path d="M4 8h15m-4-4 4 4-4 4m5 4H5m4-4-4 4 4 4"/></symbol>
+    <symbol id="repeat" viewBox="0 0 24 24"><path d="M20 9h-5m5 0V4m0 5a8 8 0 1 0 .1 6"/></symbol>
+  </svg>
+
+  <header class="top">
+    <div class="shell top-inner">
+      <a class="wordmark" href="./" aria-label="Как обычно? Главная"><span class="mark" aria-hidden="true">к<span>.</span></span><span>Как обычно<span class="accent">?</span></span></a>
+      <button class="cart-button" id="open-cart" type="button"><svg aria-hidden="true"><use href="#bag"/></svg><span>Корзина</span><span id="cart-count" class="count" hidden></span></button>
+    </div>
+  </header>
+
+  <main class="shell order-screen">
+    <button type="button" id="location" class="location" aria-haspopup="dialog">
+      <svg aria-hidden="true"><use href="#pin"/></svg>
+      <span><small>Самовывоз</small><strong id="selected-location"></strong></span>
+      <svg class="location-chevron" aria-hidden="true"><use href="#chevron"/></svg>
+    </button>
+
+    <p class="location-notice" id="location-notice" hidden></p>
+
+    <article class="order-ticket" id="order-ticket" aria-labelledby="order-heading">
+      <div class="order-cover">
+        <div class="cover-copy">
+          <span class="cover-symbol" aria-hidden="true"><svg><use href="#repeat"/></svg></span>
+          <h1 id="order-heading">Последний заказ</h1>
+        </div>
+        <img class="cover-image cover-classic" src="./classic.webp" alt="" width="1120" height="600">
+        <img class="cover-image cover-bbq" src="./bbq.webp" alt="" width="924" height="716">
+      </div>
+
+      <section class="order-body" aria-label="Состав заказа">
+        <ul class="order-lines">
+          <li class="main-item">
+            <span>
+              <strong id="main-item">Чизбургер</strong>
+              <small id="item-detail" hidden>Вместо чизбургера из прошлого заказа</small>
+            </span>
+            <strong id="main-price"></strong>
+          </li>
+          <li><span>Картофель фри</span><span id="fries-price"></span></li>
+          <li><span>Кола</span><span id="cola-price"></span></li>
+        </ul>
+
+        <div class="swap-offer" id="swap-offer">
+          <div class="swap-photo">
+            <img src="./bbq.webp" alt="" width="924" height="716">
+          </div>
+          <div class="swap-copy">
+            <h2 id="offer-title">Новинка · Бургер BBQ</h2>
+            <p id="swap-info">Вместо чизбургера · тоже с говядиной.</p>
+          </div>
+          <button class="swap-button" type="button" id="swap-order" aria-describedby="swap-info">
+            <svg aria-hidden="true"><use href="#swap"/></svg><span>Заменить</span><strong id="swap-price"></strong>
+          </button>
+        </div>
+      </section>
+
+      <div class="order-actions">
+        <button class="action primary" type="button" id="repeat-order"><span>Повторить заказ</span><strong id="repeat-price"></strong></button>
+      </div>
+    </article>
+
+    <footer class="foot"><span>Концепт для «Вкусно — и точка»</span><span>Демо-меню и цены</span></footer>
+  </main>
+
+  <dialog id="location-dialog" aria-labelledby="location-title">
+    <div class="dialog-head"><h2 id="location-title">Где заберёте заказ?</h2><button type="button" class="close" data-close aria-label="Закрыть"><svg aria-hidden="true"><use href="#close"/></svg></button></div>
+    <form id="location-form">
+      <div id="locations"></div>
+      <button class="action primary" type="submit">Выбрать ресторан</button>
+    </form>
+  </dialog>
+
+  <dialog id="cart-dialog" aria-labelledby="cart-title">
+    <div class="dialog-head"><h2 id="cart-title">Корзина</h2><button type="button" class="close" data-close aria-label="Закрыть"><svg aria-hidden="true"><use href="#close"/></svg></button></div>
+    <div id="cart-body"></div>
+  </dialog>
+  <div class="sr-only" role="status" id="status"></div>
+</body>
+</html>
