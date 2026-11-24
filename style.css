@@ -119,6 +119,8 @@ h1 { max-width: 7ch; font-size: clamp(2.25rem, 7.6vw, 3.65rem); line-height: .99
 .action strong { white-space: nowrap; font-variant-numeric: tabular-nums; }
 .primary { background: var(--green); color: white; }
 .primary:hover { background: var(--green-dark); }
+.secondary { border-color: var(--border); background: var(--paper); color: var(--green-dark); }
+.secondary:hover { background: var(--leaf); }
 .foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 15px 0 20px; color: var(--muted); font-size: .8rem; }
 dialog { margin: auto 0 auto auto; width: min(100%, 456px); max-width: 100%; max-height: 100dvh; min-height: 100dvh; padding: 25px; border: 0; border-left: 1px solid var(--border); color: var(--ink); background: var(--paper); box-shadow: 0 12px 40px #1d241d44; }
 dialog::backdrop { background: #15231888; }
@@ -138,6 +140,10 @@ dialog::backdrop { background: #15231888; }
 .cart-items small { display: block; color: var(--muted); margin-top: 3px; }
 .cart-items strong { white-space: nowrap; }
 .cart-note { margin: 0 0 16px; padding: 12px; background: var(--leaf); border-radius: 9px; color: var(--green-dark); line-height: 1.4; }
+.recovery-offer { margin: 0 0 12px; padding: 13px; border: 1px solid #e4cf9c; border-radius: 12px; background: #fbf0d6; }
+.recovery-offer h3 { margin: 0 0 5px; font-size: 1.02rem; }
+.recovery-offer p { margin: 0 0 12px; color: var(--ink); font-size: .875rem; line-height: 1.4; }
+.recovery-offer .action { font-size: .9rem; padding-inline: 10px; }
 .text-button { min-height: 44px; border: 0; padding: 0 2px; background: transparent; text-decoration: underline; text-underline-offset: 3px; font-weight: 650; }
 .demo-note { margin: 10px 0 0; color: var(--muted); font-size: .875rem; }
 .confirmation { display: grid; gap: 14px; }

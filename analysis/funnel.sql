@@ -7,7 +7,7 @@ WITH ranked_entries AS (
             ORDER BY event_at, event_id
         ) AS entry_rank
     FROM events
-    WHERE event_name = 'eligible_menu_entry'
+    WHERE event_name IN ('eligible_menu_entry', 'eligible_recovery_entry')
 ),
 guest_outcomes AS (
     SELECT
@@ -17,7 +17,10 @@ guest_outcomes AS (
         EXISTS (
             SELECT 1
             FROM events AS cart
-            WHERE cart.event_name = 'cart_opened'
+            WHERE cart.event_name = CASE entry.event_name
+                    WHEN 'eligible_recovery_entry' THEN 'cart_recovered'
+                    ELSE 'cart_opened'
+                END
                 AND cart.user_id = entry.user_id
                 AND cart.session_id = entry.session_id
                 AND cart.store_id = entry.store_id

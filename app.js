@@ -17,7 +17,8 @@ const rubles = (value) => prices.format(value) + "\u00a0₽";
 const storageKey = "usual-order-demo-v1";
 const cartDialog = byId("cart-dialog");
 const locationDialog = byId("location-dialog");
-const saved = readState();
+const recoveryDemo = new URLSearchParams(window.location.search).get("scenario") === "recovery";
+const saved = recoveryDemo ? { location: "arbat", cart: "sides" } : readState();
 let selectedRestaurant = restaurants.find(({ id }) => id === saved.location) ?? restaurants[0];
 let cart = ["classic", "bbq", "sides"].includes(saved.cart) ? saved.cart : null;
 if (cart === "bbq" && selectedRestaurant.bbq === null) cart = "sides";
@@ -33,6 +34,7 @@ function readState() {
 }
 
 function saveState() {
+  if (recoveryDemo) return;
   try {
     localStorage.setItem(storageKey, JSON.stringify({ location: selectedRestaurant.id, cart }));
   } catch {
@@ -168,36 +170,44 @@ function renderCart() {
     items.append(cartLine(itemNames[item], selectedRestaurant[item], item === "bbq" ? "Вместо чизбургера" : ""));
   }
   body.append(element("p", "Самовывоз · " + selectedRestaurant.address, "cart-address"), items);
-  if (cart === "sides") {
-    body.append(element("p", partialCartMessage(), "cart-note"));
-  } else if (isSwap) {
+  const recovering = cart === "sides";
+  if (isSwap) {
     body.append(element("p", "Фри и кола остались в заказе. Разница " + delta() + ".", "cart-note"));
   }
   const changeVariant = (variant) => {
     addOrder(variant);
     (body.querySelector(".text-button") ?? body.querySelector(".primary")).focus();
+    announce(itemNames[variant] + " добавлен. Итог " + rubles(total(variant)) + ".");
   };
-  if (cart === "sides") {
-    body.append(button("Добавить чизбургер · " + rubles(selectedRestaurant.classic),
-      "text-button", () => changeVariant("classic")));
+  if (recovering) {
+    const replacement = element("section", "", "recovery-offer");
+    const applyReplacement = button("Добавить чизбургер", "action primary", () => changeVariant("classic"));
+    applyReplacement.append(element("strong", "Итог " + rubles(total("classic"))));
+    replacement.append(
+      element("h3", "Восстановите заказ"),
+      element("p", partialCartMessage()),
+      applyReplacement
+    );
     if (selectedRestaurant.bbq !== null) {
-      body.append(button("Добавить Бургер BBQ · " + rubles(selectedRestaurant.bbq),
+      replacement.append(button("Добавить Бургер BBQ · итог " + rubles(total("bbq")),
         "text-button", () => changeVariant("bbq")));
     }
+    body.append(replacement);
   } else if (selectedRestaurant.bbq !== null) {
     body.append(button(isSwap ? "Вернуть чизбургер" : "Заменить на Бургер BBQ · " + delta(),
       "text-button", () => changeVariant(isSwap ? "classic" : "bbq")));
   }
-  const confirm = button("Оформить демо-заказ", "action primary", () => {
-    confirmation = "Самовывоз · " + selectedRestaurant.address + ". Сумма заказа " + rubles(total(cart)) + ".";
-    cart = null;
-    preview = "classic";
-    saveState();
-    refreshMenu();
-    renderCart();
-    body.querySelector("button").focus();
-    announce("Демо-заказ оформлен");
-  });
+  const confirm = button(recovering ? "Продолжить без бургера" : "Оформить демо-заказ",
+    recovering ? "action secondary" : "action primary", () => {
+      confirmation = "Самовывоз · " + selectedRestaurant.address + ". Сумма заказа " + rubles(total(cart)) + ".";
+      cart = null;
+      preview = "classic";
+      saveState();
+      refreshMenu();
+      renderCart();
+      body.querySelector("button").focus();
+      announce("Демо-заказ оформлен");
+    });
   confirm.append(element("strong", rubles(total(cart))));
   body.append(confirm, element("p", "Демонстрация без оплаты и отправки заказа.", "demo-note"));
 }
@@ -250,3 +260,4 @@ for (const control of document.querySelectorAll("[data-close]")) {
   control.addEventListener("click", () => control.closest("dialog").close());
 }
 refreshMenu();
+if (recoveryDemo) openCart();

@@ -47,6 +47,11 @@ with sqlite3.connect(":memory:") as db:
         ("eligible_menu_entry", "five", "s6", "a", 100, "swap", "B", "bbq", None, None),
         ("cart_opened", "five", "s6", "a", 200, None, None, None, 1, None),
         ("order_paid", "five", "s6", "a", 300, None, None, None, None, "o5"),
+        # Opening a partial cart is not a successful recovery.
+        ("eligible_recovery_entry", "six", "s7", "a", 100, "recovery", "A", None, None, None),
+        ("cart_opened", "six", "s7", "a", 120, None, None, None, 1, None),
+        ("eligible_recovery_entry", "seven", "s8", "a", 100, "recovery", "B", None, None, None),
+        ("cart_recovered", "seven", "s8", "a", 120, None, None, None, 1, None),
     ]
     db.executemany("INSERT INTO events VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", events)
     db.executemany("INSERT INTO order_items VALUES (?, ?)", [
@@ -57,7 +62,9 @@ with sqlite3.connect(":memory:") as db:
     query = Path(__file__).with_name("funnel.sql").read_text()
     rows = db.execute(query).fetchall()
     assert rows == [
+        ("recovery", "A", 1, 0, 0, 0, 0, 0.0, 0.0, None),
+        ("recovery", "B", 1, 1, 0, 0, 0, 1.0, 0.0, None),
         ("swap", "A", 2, 1, 1, 2, 1, .5, .5, .5),
         ("swap", "B", 3, 1, 1, 3, 0, 1 / 3, 1 / 3, 0.0),
     ], rows
-    print("Synthetic fixture passed: windows, first entry, distinct guest outcomes, store and session attribution.")
+    print("Synthetic fixture passed: windows, first entry, distinct guest outcomes, store and session attribution, partial and recovered carts.")
